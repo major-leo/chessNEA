@@ -1,5 +1,6 @@
 import pygame
 import copy
+import sys
 
 class Board:
     # creates the board through a dictionary where each square is assigned a piece also check what pieces are current in play and works out
@@ -12,13 +13,13 @@ class Board:
     def __init__(self):
         pass
 
-    def piecesInPlay(self, alliance):
+    def piecesInPlay(self, allegiance):
 
         playableP = []
-        for square in range(len(self.square)):
-            if not self.square[square].pieceOnSquare.toString() == "-":
-                if self.square[square].pieceOnSquare.alliance == alliance:
-                    playableP.append(self.square[square].pieceOnSquare)
+        for tile in range(len(self.square)):
+            if not self.square[tile].pieceOnSquare.toString() == "-":
+                if self.square[tile].pieceOnSquare.allegiance == allegiance:
+                    playableP.append(self.square[tile].pieceOnSquare)
 
         return playableP
 
@@ -30,10 +31,11 @@ class Board:
                 allPossibleMoves.append([move, piece])
         return allPossibleMoves
 
-    def createBoard(self):
-        for square in range(64):
-            self.square[square] = Square(square, NullPiece())
 
+    def makeBoard(self):
+
+        for x in range(64):
+            self.square[x] = Square(x, NullPiece())
         self.square[0] = Square(0, Rook("Black", 0))
         self.square[1] = Square(1, Knight("Black", 1))
         self.square[2] = Square(2, Bishop("Black", 2))
@@ -70,15 +72,15 @@ class Board:
 
     def printBoard(self):
         count = 0
-        for squares in range(64):
-            print("|", end=self.square[squares].pieceOnSquare.toString())
+        for tiles in range(len(self.square)):
+            print('|', end=self.square[tiles].pieceOnSquare.toString())
             count += 1
             if count == 8:
-                print("|", end="\n")
+                print('|', end='\n')
                 count = 0
 
 class Move:
-    #checks if the king is in check/checkmate and or stalemate also checks if castling, enpassant or promotion is being performed
+    # checks if the king is in check/checkmate and or stalemate also checks if castling, enpassant or promotion is being performed
 
     board = None
     pieceMoved = None
@@ -114,11 +116,13 @@ class Move:
             if self.placeMoved == 2:
                 if self.board.square[0].pieceOnSquare.toString() == "R" \
                         and self.board.square[0].pieceOnSquare.startMove:
+
                     square[0] = Square(0, NullPiece())
                     square[3] = Square(3, Rook("Black", 3))
             elif self.placeMoved == 6:
                 if self.board.square[7].pieceOnSquare.toString() == "R" \
                         and self.board.square[7].pieceOnSquare.startMove:
+
                     square[7] = Square(7, NullPiece())
                     square[5] = Square(5, Rook("Black", 5))
 
@@ -126,11 +130,13 @@ class Move:
             if self.placeMoved == 58:
                 if self.board.square[56].pieceOnSquare.toString() == "r" \
                         and self.board.square[56].pieceOnSquare.startMove:
+
                     square[56] = Square(56, NullPiece())
                     square[59] = Square(59, Rook("White", 59))
             elif self.placeMoved == 62:
                 if self.board.square[63].pieceOnSquare.toString() == "r" \
                         and self.board.square[56].pieceOnSquare.startMove:
+
                     square[63] = Square(63, NullPiece())
                     square[61] = Square(61, Rook("White", 61))
 
@@ -155,24 +161,25 @@ class Move:
         elif self.pieceMoved.toString() == 'p':
             if self.placeMoved in self.pieceMoved.firstRow:
                 newBoard.square[self.placeMoved] = Square(self.placeMoved, Queen("White", self.placeMoved))
-        newBoard.blackOrWhite = self.board.blackOrWhite
 
+        newBoard.blackOrWhite = self.board.blackOrWhite
         if newBoard.blackOrWhite == "White":
             newBoard.blackOrWhite = "Black"
         elif newBoard.blackOrWhite == "Black":
             newBoard.blackOrWhite = "White"
 
-        correct = self.checkChecks(newBoard)
+        correct = self.checksIfCheck(newBoard)
+
         if not correct:
             return False
 
-        mate = self.checkCheckmateOrStalemate(newBoard, newBoard.blackOrWhite)
+        mate = self.checkIfMateOrStale(newBoard, newBoard.blackOrWhite)
         if mate:
             return "lose"
 
         return newBoard
 
-    def checkMateBoard(self):
+    def checkIfBoardIsMate(self):
 
         newBoard = Board()
         square = {}
@@ -197,11 +204,13 @@ class Move:
             if self.placeMoved == 2:
                 if self.board.square[0].pieceOnSquare.toString() == "R" \
                         and self.board.square[0].pieceOnSquare.startMove:
+
                     square[0] = Square(0, NullPiece())
                     square[3] = Square(3, Rook("Black", 3))
             elif self.placeMoved == 6:
                 if self.board.square[7].pieceOnSquare.toString() == "R" \
                         and self.board.square[7].pieceOnSquare.startMove:
+
                     square[7] = Square(7, NullPiece())
                     square[5] = Square(5, Rook("Black", 5))
 
@@ -209,11 +218,13 @@ class Move:
             if self.placeMoved == 58:
                 if self.board.square[56].pieceOnSquare.toString() == "r" \
                         and self.board.square[56].pieceOnSquare.startMove:
+
                     square[56] = Square(56, NullPiece())
                     square[59] = Square(59, Rook("White", 59))
             elif self.placeMoved == 62:
                 if self.board.square[63].pieceOnSquare.toString() == "r" \
                         and self.board.square[56].pieceOnSquare.startMove:
+
                     square[63] = Square(63, NullPiece())
                     square[61] = Square(61, Rook("White", 61))
 
@@ -238,22 +249,21 @@ class Move:
         elif self.pieceMoved.toString() == 'p':
             if self.placeMoved in self.pieceMoved.firstRow:
                 newBoard.square[self.placeMoved] = Square(self.placeMoved, Queen("White", self.placeMoved))
+
         newBoard.blackOrWhite = self.board.blackOrWhite
-
-
-
         if newBoard.blackOrWhite == "White":
             newBoard.blackOrWhite = "Black"
         elif newBoard.blackOrWhite == "Black":
             newBoard.blackOrWhite = "White"
 
-        correct = self.checkChecks(newBoard)
+        correct = self.checksIfCheck(newBoard)
+
         if not correct:
             return False
 
         return newBoard
 
-    def checkChecks(self, newBoard):
+    def checksIfCheck(self, newBoard):
 
         if newBoard.blackOrWhite == "White":
             oppositionK = None
@@ -265,8 +275,8 @@ class Move:
             presentPieces = newBoard.piecesInPlay("White")
 
             for piece in presentPieces:
-                legalPiece = piece.possibleMoves(newBoard)
-                for legals in legalPiece:
+                pieceLegals = piece.possibleMoves(newBoard)
+                for legals in pieceLegals:
                     if legals == oppositionK:
                         return False
 
@@ -280,26 +290,25 @@ class Move:
             presentPieces = newBoard.piecesInPlay("Black")
 
             for piece in presentPieces:
-                legalPiece = piece.possibleMoves(newBoard)
-                for legals in legalPiece:
+                pieceLegals = piece.possibleMoves(newBoard)
+                for legals in pieceLegals:
                     if legals == oppositionK:
                         return False
 
         return True
 
     @staticmethod
-    def checkCheckmateOrStalemate(board, alliance):
-        pieces = board.piecesInPlay(alliance)
+    def checkIfMateOrStale(board, allegiance):
+        pieces = board.piecesInPlay(allegiance)
         moves = board.possibleMoves(pieces, board)
 
         for myMoves in moves:
             makeMove = Move(board, myMoves[1], myMoves[0])
-            newboard = makeMove.checkMateBoard()
+            newboard = makeMove.checkIfBoardIsMate()
             if newboard is not False:
                 return False
 
         return True
-
 class Square:
     #defines what pieces is on each square and where each piece is
 
@@ -312,6 +321,7 @@ class Square:
 
 class Piece:
     #super class for each piec passing each class if its the first move and also where the piece is in an edge column/row
+
     startMove = True
 
     def __init__(self):
@@ -326,19 +336,20 @@ class Piece:
     eighthRow = [63,62,61,60,59,58,57,56]
 
 class Bishop(Piece):
-    #defines how the bishop moves and what should happen if it is an edge case also the value to the AI and what player it belonges to
+    #defines how the bishop moves and what should happen if it is an edge case also the minMaxValue to the AI and what player it belonges to
     #its place on the board too
-    alliance = None
+    allegiance = None
     place = None
     moveVector = [-9, -7, 7, 9]
     minMaxValue = 300
 
-    def __init__(self, alliance, place):
-        super().__init__()
-        self.alliance = alliance
+    def __init__(self, allegiance, place):
+        self.allegiance = allegiance
         self.place = place
+
     def toString(self):
-        return "B" if self.alliance == "Black" else "b"
+        return "B" if self.allegiance == "Black" else "b"
+
 
     def possibleMoves(self, board):
 
@@ -348,7 +359,8 @@ class Bishop(Piece):
             while 0 <= destCoord < 64:
                 badMove = self.edgeCases(destCoord, vector)
                 if badMove:
-                    break #to refactor
+                    #print('bad')
+                    break
                 else:
                     destCoord += vector
                     if 0 <= destCoord < 64:
@@ -356,11 +368,13 @@ class Bishop(Piece):
                         if destTile.pieceOnSquare.toString() == "-":
                             possibleMove.append(destCoord)
                         else:
-                            if not destTile.pieceOnSquare.alliance == self.alliance:
+                            if not destTile.pieceOnSquare.allegiance == self.allegiance:
                                 possibleMove.append(destCoord)
+                            # break regardless of allegiance because blocked
                             break
 
         return possibleMove
+
 
     def edgeCases(self, place, vector):
         if place in Piece.firstColumn:
@@ -373,22 +387,20 @@ class Bishop(Piece):
 
         return False
 
-
 class King(Piece):
     # defines how the king moves and what should happen if it is an edge case also the value to the AI and what player it belonges to
     # its place on the board too and check if its in check and if its being attacked
-    alliance = None
+    allegiance = None
     place = None
     moveVector = [-9, -7, 7, 9, -8, -1, 1, 8]
-    minMaxValue = 100000
+    minMaxValue = 1100
 
-    def __init__(self, alliance, place):
-        super().__init__()
-        self.alliance = alliance
+    def __init__(self, allegiance, place):
+        self.allegiance = allegiance
         self.place = place
 
     def toString(self):
-        return "K" if self.alliance == "Black" else "k"
+        return "K" if self.allegiance == "Black" else "k"
 
     def possibleMoves(self, board):
 
@@ -404,34 +416,40 @@ class King(Piece):
                     if destTile.pieceOnSquare.toString() == "-":
                         possibleMove.append(destCoord)
                     else:
-                        if not destTile.pieceOnSquare.alliance == self.alliance:
+                        if not destTile.pieceOnSquare.allegiance == self.allegiance:
                             possibleMove.append(destCoord)
+
 
         allEnemyAttacks = []
         enemyPieces = None
 
-        if self.alliance == "Black":
+
+        if self.allegiance == "Black":
+
             enemyPieces = board.piecesInPlay("White")
 
             for enemy in range(len(enemyPieces)):
                 if not enemyPieces[enemy].toString() == "k":
                     moves = enemyPieces[enemy].possibleMoves(board)
                 else:
-                    moves = enemyPieces[enemy].possibleMovesHelp(board)
+                    moves = enemyPieces[enemy].helperCalLegalMoves(board)
                 for move in range(len(moves)):
                     allEnemyAttacks.append(moves[move])
 
-        elif self.alliance == "White":
+        elif self.allegiance == "White":
+
             enemyPieces = board.piecesInPlay("Black")
+
             for enemy in range(len(enemyPieces)):
                 if not enemyPieces[enemy].toString() == "K":
                     moves = enemyPieces[enemy].possibleMoves(board)
                 else:
-                    moves = enemyPieces[enemy].possibleMovesHelp(board)
+                    moves = enemyPieces[enemy].helperCalLegalMoves(board)
                 for move in range(len(moves)):
                     allEnemyAttacks.append(moves[move])
 
-        if self.startMove and self.alliance == "Black":
+
+        if self.startMove and self.allegiance == "Black":
 
             if board.square[0].pieceOnSquare.toString() == "R" and board.square[2].pieceOnSquare.startMove:
                 if board.square[1].pieceOnSquare.toString() == "-":
@@ -446,12 +464,12 @@ class King(Piece):
                         if not 5 in allEnemyAttacks and not 6 in allEnemyAttacks and not 4 in allEnemyAttacks:
                             possibleMove.append(6)
 
-        elif self.startMove and self.alliance == "White":
+        elif self.startMove and self.allegiance == "White":
 
             if board.square[56].pieceOnSquare.toString() == "r" and board.square[2].pieceOnSquare.startMove:
                 if board.square[57].pieceOnSquare.toString() == "-":
                     if board.square[58].pieceOnSquare.toString() == "-":
-                        if board.square[59].pieceOnSquare.toString() == "-":#
+                        if board.square[59].pieceOnSquare.toString() == "-":
                             if not 58 in allEnemyAttacks and not 59 in allEnemyAttacks and not 60 in allEnemyAttacks:
                                 possibleMove.append(58)
 
@@ -460,12 +478,14 @@ class King(Piece):
                     if board.square[61].pieceOnSquare.toString() == "-":
                         if not 62 in allEnemyAttacks and not 61 in allEnemyAttacks and not 60 in allEnemyAttacks:
                             possibleMove.append(62)
+
         finalLegal = []
         for move in possibleMove:
             if not move in allEnemyAttacks:
                 finalLegal.append(move)
 
-        return possibleMove
+        return finalLegal
+
 
     def edgeCases(self, place, vector):
         if place in Piece.firstColumn:
@@ -476,7 +496,8 @@ class King(Piece):
                 return True
         return False
 
-    def possibleMovesHelp(self, board):
+
+    def helperCalLegalMoves(self, board):
 
         possibleMove = []
         for vector in self.moveVector:
@@ -488,25 +509,25 @@ class King(Piece):
                     if destTile.pieceOnSquare.toString() == "-":
                         possibleMove.append(destCoord)
                     else:
-                        if not destTile.pieceOnSquare.alliance == self.alliance:
+                        if not destTile.pieceOnSquare.allegiance == self.allegiance:
                             possibleMove.append(destCoord)
 
         return possibleMove
 
 class Knight(Piece):
-    # defines how the knight moves and what should happen if it is an edge case also the value to the AI and what player it belonges to
-    # its place on the board too
-    alliance = None
+
+    allegiance = None
     place = None
     moveVector = [-17,-15,-10,-6,6,10,15,17]
-    minMaxValue =300
+    minMaxValue = 300
 
-    def __init__(self, alliance, place):
-        super().__init__()
-        self.alliance = alliance
+    def __init__(self, allegiance, place):
+        self.allegiance = allegiance
         self.place = place
+
+
     def toString(self):
-        return "N" if self.alliance == "Black" else "n"
+        return "N" if self.allegiance == "Black" else "n"
 
     def possibleMoves(self, board):
 
@@ -520,10 +541,14 @@ class Knight(Piece):
                     if destTile.pieceOnSquare.toString() == "-":
                         possibleMove.append(destCoord)
                     else:
-                        if not destTile.pieceOnSquare.alliance == self.alliance:
+                        if not destTile.pieceOnSquare.allegiance == self.allegiance:
                             possibleMove.append(destCoord)
 
+
+
+
         return possibleMove
+
 
     def edgeCases(self, place, vector):
         if place in Piece.firstColumn:
@@ -542,34 +567,35 @@ class Knight(Piece):
             if vector == -15 or vector == -6 or vector == 10 or vector == 17:
                 return True
 
+        return False
+
 class NullPiece(Piece):
-#assigned to each place on the board where there isnt a piece present
+
     def __init__(self):
-        super().__init__()
+        pass
+
     def toString(self):
         return "-"
 
-
 class Pawn(Piece):
-    # defines how the pawn moves and what should happen if it is an edge case also the value to the AI and what player it belonges to
-    # its place on the board too also check if enpassant is true
-    alliance = None
+
+    allegiance = None
     place = None
-    allianceMultiple = None
     moveVector = [7, 9, 8, 16]
+    allianceMultiple = None
+    startMove = True
     minMaxValue = 100
 
-    def __init__(self, alliance, place):
-        super().__init__()
-        self.alliance = alliance
+    def __init__(self, allegiance, place):
+        self.allegiance = allegiance
         self.place = place
-        if self.alliance == "Black":
+        if self.allegiance == "Black":
             self.allianceMultiple = 1
         else:
             self.allianceMultiple = -1
 
     def toString(self):
-        return "P" if self.alliance == "Black" else "p"
+        return "P" if self.allegiance == "Black" else "p"
 
     def possibleMoves(self, board):
 
@@ -583,9 +609,9 @@ class Pawn(Piece):
 
                 if vector == 8 and board.square[destCoord].pieceOnSquare.toString() == "-":
 
-                    if self.alliance == "Black" and destCoord in Piece.eighthRow:
+                    if self.allegiance == "Black" and destCoord in Piece.eighthRow:
                         possibleMove.append(destCoord)
-                    elif self.alliance == "White" and destCoord in Piece.firstRow:
+                    elif self.allegiance == "White" and destCoord in Piece.firstRow:
                         possibleMove.append(destCoord)
                     else:
                         possibleMove.append(destCoord)
@@ -598,20 +624,20 @@ class Pawn(Piece):
 
                 elif vector == 7:
 
-                    if self.place in Piece.firstColumn and self.alliance == "Black":
+                    if self.place in Piece.firstColumn and self.allegiance == "Black":
                         pass
-                    elif self.place in Piece.eighthColumn and self.alliance == "White":
+                    elif self.place in Piece.eighthColumn and self.allegiance == "White":
                         pass
                     else:
 
                         if not board.square[destCoord].pieceOnSquare.toString() == "-":
 
                             piece = board.square[destCoord].pieceOnSquare
-                            if not self.alliance == piece.alliance:
+                            if not self.allegiance == piece.allegiance:
 
-                                if self.alliance == "Black" and destCoord in Piece.eighthRow:
+                                if self.allegiance == "Black" and destCoord in Piece.eighthRow:
                                     possibleMove.append(destCoord)
-                                elif self.alliance == "White" and destCoord in Piece.firstRow:
+                                elif self.allegiance == "White" and destCoord in Piece.firstRow:
                                     possibleMove.append(destCoord)
                                 else:
                                     possibleMove.append(destCoord)
@@ -620,52 +646,51 @@ class Pawn(Piece):
 
                             if board.enPassantPawnBehind == destCoord:
                                 enPP = board.enPassantPawn
-                                if not self.alliance == enPP.alliance:
+                                if not self.allegiance == enPP.allegiance:
                                     possibleMove.append(destCoord)
+
 
                 elif vector == 9:
 
-                    if self.place in Piece.eighthColumn and self.alliance == "Black":
+                    if self.place in Piece.eighthColumn and self.allegiance == "Black":
                         pass
-                    elif self.place in Piece.firstColumn and self.alliance == "White":
+                    elif self.place in Piece.firstColumn and self.allegiance == "White":
                         pass
                     else:
 
                         if not board.square[destCoord].pieceOnSquare.toString() == "-":
                             piece = board.square[destCoord].pieceOnSquare
-                            if not self.alliance == piece.alliance:
+                            if not self.allegiance == piece.allegiance:
 
-                                if self.alliance == "Black" and destCoord in Piece.eighthRow:
+                                if self.allegiance == "Black" and destCoord in Piece.eighthRow:
                                     possibleMove.append(destCoord)
-                                elif self.alliance == "White" and destCoord in Piece.firstRow:
+                                elif self.allegiance == "White" and destCoord in Piece.firstRow:
                                     possibleMove.append(destCoord)
                                 else:
                                     possibleMove.append(destCoord)
 
-                            elif not board.enPassantPawn == None:
+                        elif not board.enPassantPawn == None:
 
-                                if board.enPassantPawnBehind == destCoord:
-                                    enPP = board.enPassantPawn
-                                    if not self.alliance == enPP.alliance:
-                                        possibleMove.append(destCoord)
+                            if board.enPassantPawnBehind == destCoord:
+                                enPP = board.enPassantPawn
+                                if not self.allegiance == enPP.allegiance:
+                                    possibleMove.append(destCoord)
+
         return possibleMove
 
-
-
 class Queen(Piece):
-    # defines how the queen moves and what should happen if it is an edge case also the value to the AI and what player it belonges to
-    # its place on the board too
-    alliance = None
+
+    allegiance = None
     place = None
     moveVector = [-9, -7, 7, 9, -8, -1, 1, 8]
     minMaxValue = 900
 
-    def __init__(self, alliance, place):
-        super().__init__()
-        self.alliance = alliance
+    def __init__(self, allegiance, place):
+        self.allegiance = allegiance
         self.place = place
+
     def toString(self):
-        return "Q" if self.alliance == "Black" else "q"
+        return "Q" if self.allegiance == "Black" else "q"
 
     def possibleMoves(self, board):
         possibleMove = []
@@ -674,7 +699,7 @@ class Queen(Piece):
             while 0 <= destCoord < 64:
                 badMove = self.edgeCases(destCoord, vector)
                 if badMove:
-                    #print('bad') #to refactor
+                    #print('bad')
                     break
                 else:
                     destCoord += vector
@@ -683,11 +708,13 @@ class Queen(Piece):
                         if destTile.pieceOnSquare.toString() == "-":
                             possibleMove.append(destCoord)
                         else:
-                            if not destTile.pieceOnSquare.alliance == self.alliance:
+                            if not destTile.pieceOnSquare.allegiance == self.allegiance:
                                 possibleMove.append(destCoord)
+                            # break regardless of allegiance because blocked
                             break
 
         return possibleMove
+
 
     def edgeCases(self, place, vector):
         if place in Piece.firstColumn:
@@ -701,19 +728,18 @@ class Queen(Piece):
         return False
 
 class Rook(Piece):
-    # defines how the rook moves and what should happen if it is an edge case also the value to the AI and what player it belonges to
-    # its place on the board too
-    alliance = None
+
+    allegiance = None
     place = None
     moveVector = [-8,-1,1,8]
-    minMaxValue = 450
+    minMaxValue = 500
 
-    def __init__(self, alliance, place):
-        super().__init__()
-        self.alliance = alliance
+    def __init__(self, allegiance, place):
+        self.allegiance = allegiance
         self.place = place
+
     def toString(self):
-        return "R" if self.alliance == "Black" else "r"
+        return "R" if self.allegiance == "Black" else "r"
 
     def possibleMoves(self, board):
         possibleMove = []
@@ -730,12 +756,14 @@ class Rook(Piece):
                         if destTile.pieceOnSquare.toString() == "-":
                             possibleMove.append(destCoord)
                         else:
-                            if not destTile.pieceOnSquare.alliance == self.alliance:
+                            if not destTile.pieceOnSquare.allegiance == self.allegiance:
                                 possibleMove.append(destCoord)
-                            # break regardless of alliance because blocked
+                            # break regardless of allegiance because blocked
                             break
 
         return possibleMove
+
+
 
     def edgeCases(self, place, vector):
         if place in Piece.firstColumn:
@@ -748,155 +776,224 @@ class Rook(Piece):
 
         return False
 
+class BoardEvaluator:
+
+    def __init__(self):
+        pass
+
+    def evaluate(self, board, depth):
+        return self.scorePlayer("White", board) - self.scorePlayer("Black", board)
+
+    def scorePlayer(self, player, board):
+        return self.pieceValue(player, board) + self.mobility(player, board)
+
+    def mobility(self, player, board):
+        presentPieces = board.piecesInPlay(player)
+        return len(board.possibleMoves(presentPieces, board))
+
+    def pieceValue(self, player, board):
+        pieceValues = 0
+        presentPieces = board.piecesInPlay(player)
+
+        for piece in presentPieces:
+            pieceValues += piece.minMaxValue
+
+        return pieceValues
+
+class Minimax:
+
+    board = None
+    depth = None
+    boardEvaluator = None
+    currentValue = None
+    highestSeenValue = None
+    lowestSeenValue = None
+    bestMove = None
+
+    def __init__(self, board, depth):
+        self.board = board
+        self.depth = depth
+        self.boardEvaluator = BoardEvaluator()
+
+    def getMove(self):
+
+        blackOrWhite = self.board.blackOrWhite
+        presentPieces = self.board.piecesInPlay(blackOrWhite)
+        allPossibleMoves = self.board.possibleMoves(presentPieces, self.board)
+
+        self.highestSeenValue = -sys.maxsize
+        self.lowestSeenValue = sys.maxsize
+
+        for myMoves in allPossibleMoves:
+            makeMove = Move(self.board, myMoves[1], myMoves[0])
+            newboard = makeMove.newBoard()
+            if newboard is not False:
+
+                if blackOrWhite == "White":
+                    self.currentValue = self.min(newboard, self.depth)
+                else:
+                    self.currentValue = self.max(newboard, self.depth)
+
+                if blackOrWhite == "White" and self.currentValue > self.highestSeenValue:
+                    self.highestSeenValue = self.currentValue
+                    self.bestMove = newboard
+                if blackOrWhite == "Black" and self.currentValue < self.lowestSeenValue:
+                    self.lowestSeenValue = self.currentValue
+                    self.bestMove = newboard
+
+        return self.bestMove
+
+    def max(self, board, depth):
+
+        # TODO checkmate/stalemate
+        if depth == 0 and not Move.checkIfMateOrStale(board, board.blackOrWhite):
+            return self.boardEvaluator.evaluate(board, depth)
+
+        highestSeenValue = -sys.maxsize
+        presentPieces = board.piecesInPlay(board.blackOrWhite)
+        allPossibleMoves = board.possibleMoves(presentPieces, board)
+
+        for myMoves in allPossibleMoves:
+            makeMove = Move(self.board, myMoves[1], myMoves[0])
+            newboard = makeMove.newBoard()
+            if not newboard == False:
+                minMaxValue = self.min(newboard, depth - 1)
+                if minMaxValue >= highestSeenValue:
+                    highestSeenValue = minMaxValue
+
+        return highestSeenValue
+
+    def min(self, board, depth):
+
+        # TODO checkmate/stalemate
+        if depth == 0 and not Move.checkIfMateOrStale(board, board.blackOrWhite):
+            return self.boardEvaluator.evaluate(board, depth)
+
+        lowestSeenValue = sys.maxsize
+        presentPieces = board.piecesInPlay(board.blackOrWhite)
+        allPossibleMoves = board.possibleMoves(presentPieces, board)
+
+        for myMoves in allPossibleMoves:
+            makeMove = Move(self.board, myMoves[1], myMoves[0])
+            newboard = makeMove.newBoard()
+            if not newboard == False:
+                minMaxValue = self.min(newboard, depth - 1)
+                if minMaxValue <= lowestSeenValue:
+                    lowestSeenValue = minMaxValue
+
+        return lowestSeenValue
+
 pygame.init()
 gameDisplay = pygame.display.set_mode((800, 800))
-pygame.display.set_caption("Python Chess AI")
+pygame.display.set_caption("PyChess")
 clock = pygame.time.Clock()
 
 chessBoard = Board()
-chessBoard.createBoard()
-#chessBoard.printBoard()
-
+chessBoard.makeBoard()
+# chessBoard.printBoard()
 
 everyTile = []
 everyPiece = []
 blackOrWhite = chessBoard.blackOrWhite
-#fuction to display the text when the game is over
+
 def display_text(message, style, size, colour, x, y):
     text = pygame.font.Font(style,size).render(message, True, colour, (0))
     textRect = text.get_rect()
     textRect.center = (x, y)
     gameDisplay.blit(text, textRect)
+
 def createSqParams():
     allPossibleSquares = []
-    xMin = 0
-    xMax = 100
-    yMin = 0
-    yMax = 100
+    minimumX = 0
+    maximumX = 100
+    minimumY = 0
+    maximumY = 100
     for _ in range(8):
         for _ in range(8):
-            allPossibleSquares.append([xMin, xMax, yMin, yMax])
-            xMin += 100
-            xMax += 100
-        xMin = 0
-        xMax = 100
-        yMin += 100
-        yMax += 100
+            allPossibleSquares.append([minimumX, maximumX, minimumY, maximumY])
+            minimumX += 100
+            maximumX += 100
+        minimumX = 0
+        maximumX = 100
+        minimumY += 100
+        maximumY += 100
     return allPossibleSquares
-#creates a GUI of each square
-def squares(x, y, w, h, count):
-    pygame.draw.rect(gameDisplay, count, [x, y, w, h])
-    everyTile.append([count, [x, y, w, h]])
 
-#appends an image for each piece on the board
+def squares(x, y, w, h, color):
+    pygame.draw.rect(gameDisplay, color, [x, y, w, h])
+    everyTile.append([color, [x, y, w, h]])
+
 def drawChessPieces():
     xpos = 0
     ypos = 0
-    count = 0
+    color = 0
     width = 100
-    hieght = 100
-    black = (66, 134, 244)
-    white = (143, 155, 175)
-    counter = 0
-
-    for column in range(8):
-        for row in range(8):
-            if count % 2 == 0:
-                squares(xpos, ypos, width, hieght, white)
-                if not chessBoard.square[counter].pieceOnSquare.toString() == "-":
-                    image = pygame.image.load("./ChessArt/"
-                                            + chessBoard.square[counter].pieceOnSquare.alliance[0].upper()
-                                            + chessBoard.square[counter].pieceOnSquare.toString().upper()
-                                            + ".png")
-                    image = pygame.transform.scale(image, (100, 100))
-                    everyPiece.append([image, [xpos, ypos], chessBoard.square[counter].pieceOnSquare])
+    height = 100
+    black = (150,75,0)
+    white = (255,255,255)
+    number = 0
+    for _ in range(8):
+        for _ in range(8):
+            if color % 2 == 0:
+                squares(xpos, ypos, width, height, white)
+                if not chessBoard.square[number].pieceOnSquare.toString() == "-":
+                    img = pygame.image.load("./ChessArt/" + chessBoard.square[number].pieceOnSquare.allegiance[0].upper() + chessBoard.square[
+                        number].pieceOnSquare.toString().upper() + ".png")
+                    img = pygame.transform.scale(img, (100, 100))
+                    everyPiece.append([img, [xpos, ypos], chessBoard.square[number].pieceOnSquare])
                 xpos += 100
-
             else:
-                squares(xpos, ypos, width, hieght, black)
-                if not chessBoard.square[counter].pieceOnSquare.toString() == "-":
-                    image = pygame.image.load("./ChessArt/"
-                                            + chessBoard.square[counter].pieceOnSquare.alliance[0].upper()
-                                            + chessBoard.square[counter].pieceOnSquare.toString().upper()
-                                            + ".png")
-                    image = pygame.transform.scale(image, (100, 100))
-                    everyPiece.append([image, [xpos, ypos], chessBoard.square[counter].pieceOnSquare])
+                squares(xpos, ypos, width, height, black)
+                if not chessBoard.square[number].pieceOnSquare.toString() == "-":
+                    img = pygame.image.load("./ChessArt/" + chessBoard.square[number].pieceOnSquare.allegiance[0].upper() + chessBoard.square[
+                        number].pieceOnSquare.toString().upper() + ".png")
+                    img = pygame.transform.scale(img, (100, 100))
+                    everyPiece.append([img, [xpos, ypos], chessBoard.square[number].pieceOnSquare])
                 xpos += 100
-            count += 1
-            counter += 1
-        count += 1
+
+            color += 1
+            number += 1
+        color += 1
         xpos = 0
         ypos += 100
-#updates the image according to the board
+
+
+
 def updateChessPieces():
 
     xpos = 0
     ypos = 0
-    counter = 0
+    number = 0
     newPieces = []
 
     for _ in range(8):
         for _ in range(8):
-            if not chessBoard.square[counter].pieceOnSquare.toString() == "-":
+            if not chessBoard.square[number].pieceOnSquare.toString() == "-":
 
-                image = pygame.image.load("./ChessArt/"
-                                        + chessBoard.square[counter].pieceOnSquare.alliance[0].upper()
-                                        + chessBoard.square[counter].pieceOnSquare.toString().upper()
-                                        + ".png")
-                image = pygame.transform.scale(image, (100, 100))
+                img = pygame.image.load(
+                    "./ChessArt/" + chessBoard.square[number].pieceOnSquare.allegiance[0].upper() + chessBoard.square[
+                        number].pieceOnSquare.toString().upper() + ".png")
+                img = pygame.transform.scale(img, (100, 100))
 
-                newPieces.append([image, [xpos, ypos], chessBoard.square[counter].pieceOnSquare])
+                newPieces.append([img, [xpos, ypos], chessBoard.square[number].pieceOnSquare])
             xpos += 100
-            counter += 1
+            number += 1
         xpos = 0
         ypos += 100
 
     return newPieces
 
-###########################################
-#MINMAXAI
-#function that checks the value of the board comparing the pieces on the board
-def checkBoard(board):
-    value = 0
-    player = "Black"
-    for count in range(2):
-        pieces = board.piecesInPlay(player)
-        for piece in pieces:
-            if player == "Black":
-                value -= piece.minMaxValue
-            else:
-                value += piece.minMaxValue
-        player = "White"
-    return value
-
-#board = checkBoard(chessBoard)
-#print(board)
-
-def aiMove():
-    minValue = checkBoard(chessBoard)
-    bestMove = None
-    aiPieces = chessBoard.piecesInPlay(blackOrWhite)
-    allPossibleMoves = chessBoard.possibleMoves(aiPieces, chessBoard)
-    for count in range(2):
-        for moves in allPossibleMoves:
-            theMove = Move(chessBoard, moves[1], moves[0])
-            reboard = theMove.newBoard()
-            if checkBoard(reboard) <= minValue:
-                minValue = checkBoard(reboard)
-            if count == 1 and checkBoard(reboard) == minValue:
-                bestMove = reboard
-    return bestMove
-
-###########################################
 
 allSqParams = createSqParams()
 drawChessPieces()
-selectedPiece = None
+
+
+selectedImage = None
 selectedLegals = None
 resetC = []
-mx, my = pygame.mouse.get_pos()
-prex, prey = [0, 0]
 quitGame = False
+mx, my = pygame.mouse.get_pos()
+prevx, prevy = [0,0]
 loseGame = False
 winImage = False
 winColour = None
@@ -912,53 +1009,62 @@ while not quitGame:
             pygame.quit()
             quit()
 
-        #when the mouse is clicked down where the mouse is the piece is selected and check the legal move of each move
         if event.type == pygame.MOUSEBUTTONDOWN:
+
+            if selectedImage == None:
+                mx, my = pygame.mouse.get_pos()
+                for piece in range(len(everyPiece)):
+
+                    if everyPiece[piece][2].allegiance == blackOrWhite:
+
+                        if everyPiece[piece][1][0] < mx < everyPiece[piece][1][0]+100:
+                            if everyPiece[piece][1][1] < my < everyPiece[piece][1][1] + 100:
+                                selectedImage = piece
+                                prevx = everyPiece[piece][1][0]
+                                prevy = everyPiece[piece][1][1]
+
+                                selectedLegals = everyPiece[selectedImage][2].possibleMoves(chessBoard)
+                                for legals in selectedLegals:
+                                    resetC.append([legals, everyTile[legals][0]])
+
+
+                                    if everyTile[legals][0] == (150,75,0):
+                                        everyTile[legals][0] = (127, 255, 0)
+                                    else:
+                                        everyTile[legals][0] = (118, 238, 0)
+
+
+        if event.type == pygame.MOUSEMOTION and not selectedImage == None:
+
             mx, my = pygame.mouse.get_pos()
-            for piece in range(len(everyPiece)):
+            everyPiece[selectedImage][1][0] = mx-50
+            everyPiece[selectedImage][1][1] = my-50
 
-                if everyPiece[piece][2].alliance == blackOrWhite:
-
-                    if everyPiece[piece][1][0] < mx < everyPiece[piece][1][0] + 100:
-                        if everyPiece[piece][1][1] < my < everyPiece[piece][1][1] + 100:
-                            selectedPiece = piece
-                            prex = everyPiece[piece][1][0]
-                            prey = everyPiece[piece][1][1]
-
-                            selectedLegals = everyPiece[selectedPiece][2].possibleMoves(chessBoard)
-                            for legals in selectedLegals:
-                                resetC.append([legals, everyTile[legals][0]])
-
-                                if everyTile[legals][0] == (66, 134, 244):
-                                    everyTile[legals][0] = (127, 255, 0)
-                                else:
-                                    everyTile[legals][0] = (118, 238, 0)
-        #checks the mouse motion and moves the pieces
-        if event.type == pygame.MOUSEMOTION and selectedPiece != None:
-            mx, my = pygame.mouse.get_pos()
-            everyPiece[selectedPiece][1][0] = mx - 50
-            everyPiece[selectedPiece][1][1] = my - 50
-        #check if the mouse is up and moves the pieces accordingly also initiates the ai fuction
         if event.type == pygame.MOUSEBUTTONUP:
+
             for resets in resetC:
                 everyTile[resets[0]][0] = resets[1]
 
             try:
-                pieceMoves = everyPiece[selectedPiece][2].possibleMoves(chessBoard)
+
+
+
+                pieceMoves = everyPiece[selectedImage][2].possibleMoves(chessBoard)
                 legal = False
                 theMove = 0
                 for moveDes in pieceMoves:
-                    if allSqParams[moveDes][0] < everyPiece[selectedPiece][1][0] + 50 < allSqParams[moveDes][1]:
-                        if allSqParams[moveDes][2] < everyPiece[selectedPiece][1][1] + 50 < allSqParams[moveDes][3]:
+                    if allSqParams[moveDes][0] < everyPiece[selectedImage][1][0]+50 < allSqParams[moveDes][1]:
+                        if allSqParams[moveDes][2] < everyPiece[selectedImage][1][1]+50 < allSqParams[moveDes][3]:
                             legal = True
                             theMove = moveDes
                 if legal == False:
-                    everyPiece[selectedPiece][1][0] = prex
-                    everyPiece[selectedPiece][1][1] = prey
+                    everyPiece[selectedImage][1][0] = prevx
+                    everyPiece[selectedImage][1][1] = prevy
                 else:
-                    everyPiece[selectedPiece][1][0] = allSqParams[theMove][0]
-                    everyPiece[selectedPiece][1][1] = allSqParams[theMove][2]
-                    thisMove = Move(chessBoard, everyPiece[selectedPiece][2], theMove)
+                    everyPiece[selectedImage][1][0] = allSqParams[theMove][0]
+                    everyPiece[selectedImage][1][1] = allSqParams[theMove][2]
+
+                    thisMove = Move(chessBoard, everyPiece[selectedImage][2], theMove)
                     newBoard = thisMove.newBoard()
                     if newBoard != False and newBoard != "lose":
                         chessBoard = newBoard
@@ -972,31 +1078,37 @@ while not quitGame:
                         quitGame = True
                         word = "White Wins"
                         winColour = (0, 0, 0)
-                    #chessBoard.printBoard()
+
                     newP = updateChessPieces()
                     everyPiece = newP
                     blackOrWhite = newBoard.blackOrWhite
 
                     if blackOrWhite == "Black":
-                        newBoard = aiMove()
-                        chessBoard = newBoard
+                        aiBoard = True
+                        minimax = Minimax(chessBoard, 1)
+                        aiBoard = minimax.getMove()
+                        chessBoard = aiBoard
                         newP = updateChessPieces()
                         everyPiece = newP
-                        blackOrWhite = newBoard.blackOrWhite
+                        blackOrWhite = aiBoard.blackOrWhite
 
             except:
                 pass
-            prey = 0
-            prex = 0
-            selectedPiece = None
+
+            prevy = 0
+            prevx = 0
+            selectedImage = None
+
 
     gameDisplay.fill((255, 255, 255))
 
     for info in everyTile:
         pygame.draw.rect(gameDisplay, info[0], info[1])
 
-    for image in everyPiece:
-        gameDisplay.blit(image[0], image[1])
+    for img in everyPiece:
+        gameDisplay.blit(img[0], img[1])
+
+
 
     pygame.display.update()
     clock.tick(60)
@@ -1008,7 +1120,7 @@ while not loseGame:
             quitGame = True
             pygame.quit()
             quit()
+
     display_text(word, "freesansbold.ttf", 32, winColour, 400, 400)
     pygame.display.update()
     clock.tick(60)
-
