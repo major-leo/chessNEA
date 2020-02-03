@@ -148,7 +148,8 @@
       <workItem from="1575844631852" duration="494000" />
       <workItem from="1575888088566" duration="3959000" />
       <workItem from="1580679603192" duration="88000" />
-      <workItem from="1580687033126" duration="3593000" />
+      <workItem from="1580687033126" duration="3664000" />
+      <workItem from="1580690826521" duration="243000" />
     </task>
     <servers />
   </component>
@@ -160,22 +161,22 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="223" y="67" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1575748684766" />
-    <state width="1024" height="210" key="GridCell.Tab.0.bottom" timestamp="1580690669829">
+    <state width="1024" height="210" key="GridCell.Tab.0.bottom" timestamp="1580691068018">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1024" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1580690669829" />
-    <state width="1024" height="210" key="GridCell.Tab.0.center" timestamp="1580690669829">
+    <state width="1024" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1580691068018" />
+    <state width="1024" height="210" key="GridCell.Tab.0.center" timestamp="1580691068018">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1024" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1580690669829" />
-    <state width="1024" height="210" key="GridCell.Tab.0.left" timestamp="1580690669829">
+    <state width="1024" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1580691068018" />
+    <state width="1024" height="210" key="GridCell.Tab.0.left" timestamp="1580691068017">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1024" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1580690669829" />
-    <state width="1024" height="210" key="GridCell.Tab.0.right" timestamp="1580690669829">
+    <state width="1024" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1580691068017" />
+    <state width="1024" height="210" key="GridCell.Tab.0.right" timestamp="1580691068018">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1024" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1580690669829" />
+    <state width="1024" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1580691068018" />
     <state width="1024" height="210" key="GridCell.Tab.1.bottom" timestamp="1575845030214">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -199,7 +200,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/untitled$tempFile.coverage" NAME="tempFile Coverage Results" MODIFIED="1575891432087" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/chessNEA$tempFile.coverage" NAME="tempFile Coverage Results" MODIFIED="1580690662979" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/chessNEA$tempFile.coverage" NAME="tempFile Coverage Results" MODIFIED="1580691058560" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/untitled$Unnamed.coverage" NAME="Unnamed Coverage Results" MODIFIED="1575844999270" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

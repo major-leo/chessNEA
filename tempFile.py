@@ -758,7 +758,6 @@ class Rook(Piece):
                         else:
                             if not destTile.pieceOnSquare.allegiance == self.allegiance:
                                 possibleMove.append(destCoord)
-                            # break regardless of allegiance because blocked
                             break
 
         return possibleMove
@@ -776,22 +775,22 @@ class Rook(Piece):
 
         return False
 
-class BoardEvaluator:
+class BoardCheck:
 
     def __init__(self):
         pass
 
-    def evaluate(self, board, depth):
-        return self.scorePlayer("White", board) - self.scorePlayer("Black", board)
+    def analysis(self, board, depth):
+        return self.boardScore("White", board) - self.boardScore("Black", board)
 
-    def scorePlayer(self, player, board):
-        return self.pieceValue(player, board) + self.mobility(player, board)
+    def boardScore(self, player, board):
+        return self.pieceWorth(player, board) + self.canMove(player, board)
 
-    def mobility(self, player, board):
+    def canMove(self, player, board):
         presentPieces = board.piecesInPlay(player)
         return len(board.possibleMoves(presentPieces, board))
 
-    def pieceValue(self, player, board):
+    def pieceWorth(self, player, board):
         pieceValues = 0
         presentPieces = board.piecesInPlay(player)
 
@@ -804,25 +803,25 @@ class Minimax:
 
     board = None
     depth = None
-    boardEvaluator = None
-    currentValue = None
-    highestSeenValue = None
-    lowestSeenValue = None
+    BoardCheck = None
+    currentWorth = None
+    highestWorth = None
+    lowestWorth = None
     bestMove = None
 
     def __init__(self, board, depth):
         self.board = board
         self.depth = depth
-        self.boardEvaluator = BoardEvaluator()
+        self.BoardCheck = BoardCheck()
 
-    def getMove(self):
+    def getBestMove(self):
 
         blackOrWhite = self.board.blackOrWhite
         presentPieces = self.board.piecesInPlay(blackOrWhite)
         allPossibleMoves = self.board.possibleMoves(presentPieces, self.board)
 
-        self.highestSeenValue = -sys.maxsize
-        self.lowestSeenValue = sys.maxsize
+        self.highestWorth = -sys.maxsize
+        self.lowestWorth = sys.maxsize
 
         for myMoves in allPossibleMoves:
             makeMove = Move(self.board, myMoves[1], myMoves[0])
@@ -830,26 +829,25 @@ class Minimax:
             if newboard is not False:
 
                 if blackOrWhite == "White":
-                    self.currentValue = self.min(newboard, self.depth)
+                    self.currentWorth = self.min(newboard, self.depth)
                 else:
-                    self.currentValue = self.max(newboard, self.depth)
+                    self.currentWorth = self.max(newboard, self.depth)
 
-                if blackOrWhite == "White" and self.currentValue > self.highestSeenValue:
-                    self.highestSeenValue = self.currentValue
+                if blackOrWhite == "White" and self.currentWorth > self.highestWorth:
+                    self.highestWorth = self.currentWorth
                     self.bestMove = newboard
-                if blackOrWhite == "Black" and self.currentValue < self.lowestSeenValue:
-                    self.lowestSeenValue = self.currentValue
+                if blackOrWhite == "Black" and self.currentWorth < self.lowestWorth:
+                    self.lowestWorth = self.currentWorth
                     self.bestMove = newboard
 
         return self.bestMove
 
     def max(self, board, depth):
 
-        # TODO checkmate/stalemate
         if depth == 0 and not Move.checkIfMateOrStale(board, board.blackOrWhite):
-            return self.boardEvaluator.evaluate(board, depth)
+            return self.BoardCheck.analysis(board, depth)
 
-        highestSeenValue = -sys.maxsize
+        highestWorth = -sys.maxsize
         presentPieces = board.piecesInPlay(board.blackOrWhite)
         allPossibleMoves = board.possibleMoves(presentPieces, board)
 
@@ -858,18 +856,17 @@ class Minimax:
             newboard = makeMove.newBoard()
             if not newboard == False:
                 minMaxValue = self.min(newboard, depth - 1)
-                if minMaxValue >= highestSeenValue:
-                    highestSeenValue = minMaxValue
+                if minMaxValue >= highestWorth:
+                    highestWorth = minMaxValue
 
-        return highestSeenValue
+        return highestWorth
 
     def min(self, board, depth):
 
-        # TODO checkmate/stalemate
         if depth == 0 and not Move.checkIfMateOrStale(board, board.blackOrWhite):
-            return self.boardEvaluator.evaluate(board, depth)
+            return self.BoardCheck.analysis(board, depth)
 
-        lowestSeenValue = sys.maxsize
+        lowestWorth = sys.maxsize
         presentPieces = board.piecesInPlay(board.blackOrWhite)
         allPossibleMoves = board.possibleMoves(presentPieces, board)
 
@@ -878,10 +875,10 @@ class Minimax:
             newboard = makeMove.newBoard()
             if not newboard == False:
                 minMaxValue = self.min(newboard, depth - 1)
-                if minMaxValue <= lowestSeenValue:
-                    lowestSeenValue = minMaxValue
+                if minMaxValue <= lowestWorth:
+                    lowestWorth = minMaxValue
 
-        return lowestSeenValue
+        return lowestWorth
 
 pygame.init()
 gameDisplay = pygame.display.set_mode((800, 800))
@@ -1086,7 +1083,7 @@ while not quitGame:
                     if blackOrWhite == "Black":
                         aiBoard = True
                         minimax = Minimax(chessBoard, 1)
-                        aiBoard = minimax.getMove()
+                        aiBoard = minimax.getBestMove()
                         chessBoard = aiBoard
                         newP = updateChessPieces()
                         everyPiece = newP
